@@ -226,6 +226,10 @@ class ImageField(BaseModel):
 
     image_name: str = Field(description="The name of the image")
 
+class VideoField(BaseModel):
+    """An video primitive field"""
+
+    video_name: str = Field(description="The name of the video")
 
 class BoardField(BaseModel):
     """A board primitive field"""
@@ -240,6 +244,32 @@ class ImageOutput(BaseInvocationOutput):
     image: ImageField = OutputField(description="The output image")
     width: int = OutputField(description="The width of the image in pixels")
     height: int = OutputField(description="The height of the image in pixels")
+
+@invocation_output("video_output")
+class VideoOutput(BaseInvocationOutput):
+    """Base class for nodes that output a single video"""
+
+    video: VideoField = OutputField(description="The output video")
+    width: int = OutputField(description="The width of the video in pixels")
+    height: int = OutputField(description="The height of the video in pixels")
+    fps : float = OutputField(description="FPS of the video")
+    frames: int = OutputField(description="The number of frames in the video")
+
+@invocation("video", title="Video Primitive", tags=["primitives", "video"], category="primitives", version="1.0.0")
+class VideoInvocation(
+    BaseInvocation,
+):
+    """A video primitive value"""
+
+    video : str = InputField(description="The video to load")
+
+    def invoke(self, context: InvocationContext) -> VideoOutput:
+        video = Path(self.video)
+        print (video)
+
+        return VideoOuputut (
+            video=VideoField(video_name=self.video),
+        )
 
 
 @invocation_output("image_collection_output")
